@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import "./sign-up.styles.scss";
 import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-button/custom-button.component";
-import { auth, createUserProfileDocument } from "../../firebase/firebase.util";
-import { createUserWithEmailAndPassword } from "@firebase/auth";
+import { useDispatch } from "react-redux";
+import { signUpStartAsync } from "../../redux/user/user.actions";
 
 interface ISignUpCredentials {
   displayName: string;
@@ -13,6 +13,7 @@ interface ISignUpCredentials {
 }
 
 const SignUp = () => {
+  const dispatch = useDispatch();
   const [credentials, setCredentials] = useState<ISignUpCredentials>({
     displayName: "",
     email: "",
@@ -36,26 +37,8 @@ const SignUp = () => {
       alert("Passwords dont match");
       return;
     }
-    alert(`Submitting with ${displayName} ${email} ${password}`);
 
-    try {
-      const { user } = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      await createUserProfileDocument(user, displayName);
-
-      // emptying form
-      setCredentials({
-        displayName: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      });
-    } catch (err: unknown) {
-      console.log("Error in signup", err);
-    }
+    dispatch(signUpStartAsync(email, password, displayName));
   };
 
   return (
@@ -102,3 +85,24 @@ const SignUp = () => {
 };
 
 export default SignUp;
+
+// Removed from in component
+/* 
+    try {
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+    await createUserProfileDocument(user, displayName);
+
+      // emptying form
+      setCredentials({
+        displayName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+    } catch (err: unknown) {
+      console.log("Error in signup", err);
+    } */

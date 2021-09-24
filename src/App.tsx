@@ -21,7 +21,6 @@ function App() {
       setUser(firebaseUser); // just in state
       dispatch(setCurrentUser(firebaseUser));
       //dispatching
-      console.log("User", firebaseUser);
     });
 
     return unsubscribe;
@@ -34,7 +33,6 @@ function App() {
         <Route exact path="/" component={HomePage} />
         <Route path="/shop" component={ShopPage} />
         <Route path="/checkout" component={CheckoutPage} />
-
         <Route
           exact
           path="/signin"

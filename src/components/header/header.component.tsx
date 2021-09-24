@@ -9,8 +9,11 @@ import { selectCurrentUser } from "../../redux/user/user.selectors";
 import { selectCartHidden } from "../../redux/cart/cart.selectors";
 import { useSelector } from "react-redux";
 import { auth } from "../../firebase/firebase.util";
+import { useDispatch } from "react-redux";
+import { signOutStartAsync } from "../../redux/user/user.actions";
 
 const Header = () => {
+  const dispatch = useDispatch();
   let currentUser = useSelector(selectCurrentUser);
   let cartHidden = useSelector(selectCartHidden);
 
@@ -29,7 +32,7 @@ const Header = () => {
         </Link>
 
         {currentUser ? (
-          <div className="option" onClick={() => auth.signOut()}>
+          <div className="option" onClick={() => dispatch(signOutStartAsync())}>
             SIGN OUT
           </div>
         ) : (

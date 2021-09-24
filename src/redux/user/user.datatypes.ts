@@ -8,5 +8,5 @@ export interface IUserState {
 
 export interface IUserAction {
   type: string;
-  payload: UserType;
+  payload?: UserType | string;
 }

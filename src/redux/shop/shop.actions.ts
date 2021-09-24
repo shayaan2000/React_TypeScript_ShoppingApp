@@ -10,7 +10,6 @@ import { ThunkDispatch } from "redux-thunk";
 import { IRootState } from "../root-reducer";
 
 export const fetchCollectionsStart = () => {
-  console.log(" I AM HERE");
   return {
     type: ShopActionTypes.FETCH_COLLECTIONS_START,
     payload: "",
