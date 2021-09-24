@@ -11,22 +11,23 @@ const userReducer = (
 ): IUserState => {
   switch (action.type) {
     case UserActionTypes.SET_CURRENT_USER:
-      if (typeof action.payload !== "string" && action.payload !== undefined)
+    case UserActionTypes.SIGN_IN_SUCCESS:
+    case UserActionTypes.SIGN_UP_SUCCESS:
+      if (action.payload !== undefined)
         return {
-          ...state,
           currentUser: action.payload,
         };
       return state;
 
-    case UserActionTypes.SIGN_IN_SUCCESS:
-    case UserActionTypes.SIGN_IN_FAILURE:
     case UserActionTypes.SIGN_OUT_SUCCESS:
-    case UserActionTypes.SIGN_OUT_FAILURE:
-    case UserActionTypes.SIGN_UP_SUCCESS:
-    case UserActionTypes.SIGN_UP_FAILURE:
       return {
-        ...state,
+        currentUser: null,
       };
+
+    case UserActionTypes.SIGN_OUT_FAILURE:
+    case UserActionTypes.SIGN_IN_FAILURE:
+    case UserActionTypes.SIGN_UP_FAILURE:
+      return state;
 
     default:
       return state;

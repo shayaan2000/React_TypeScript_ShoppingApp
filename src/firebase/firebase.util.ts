@@ -97,3 +97,13 @@ export const convertCollectionsSnapshotToMap = (
     {}
   );
 };
+
+//mimicking promise by immediately unsubc=scribing
+export const getCurrentUser = () => {
+  return new Promise<User | null>((resolve, reject) => {
+    const unsubscribe = auth.onAuthStateChanged((userAuth) => {
+      unsubscribe();
+      resolve(userAuth);
+    }, reject);
+  });
+};

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import Header from "./components/header/header.component";
 import HomePage from "./pages/home/home.component";
@@ -6,24 +6,16 @@ import ShopPage from "./pages/shop/shop.component";
 import CheckoutPage from "./pages/checkout/checkout.component";
 import SignInAndSignOutPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up.component";
 import { Route, Switch, Redirect } from "react-router-dom";
-import { auth } from "./firebase/firebase.util";
-import { User } from "firebase/auth";
-import { Unsubscribe } from "@firebase/firestore";
-import { useDispatch } from "react-redux";
-import { setCurrentUser } from "./redux/user/user.actions";
-let unsubscribe: Unsubscribe | null = null;
+import { useDispatch, useSelector } from "react-redux";
+import { checkCurrentUserAsync } from "./redux/user/user.actions";
+import { selectCurrentUser } from "./redux/user/user.selectors";
 
 function App() {
   const dispatch = useDispatch();
-  const [user, setUser] = useState<User | null>();
-  useEffect(() => {
-    unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
-      setUser(firebaseUser); // just in state
-      dispatch(setCurrentUser(firebaseUser));
-      //dispatching
-    });
+  const user = useSelector(selectCurrentUser);
 
-    return unsubscribe;
+  useEffect(() => {
+    dispatch(checkCurrentUserAsync());
   }, []);
 
   return (
@@ -44,18 +36,3 @@ function App() {
 }
 
 export default App;
-
-/* 
-useEffect(() => {
-    unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
-      setUser(firebaseUser); // just in state
-      dispatch(setCurrentUser(firebaseUser));
-      //dispatching
-      console.log("User", firebaseUser);
-    });
-
-    return unsubscribe;
-  }, []);
-
-
-*/

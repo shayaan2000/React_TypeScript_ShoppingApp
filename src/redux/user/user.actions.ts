@@ -7,7 +7,9 @@ import {
   signInWithGoogle,
   auth,
   createUserProfileDocument,
+  getCurrentUser,
 } from "../../firebase/firebase.util";
+import { User } from "firebase/auth";
 import { createUserWithEmailAndPassword } from "@firebase/auth";
 
 export const setCurrentUser = (user: UserType): IUserAction => ({
@@ -19,8 +21,9 @@ export const signInStart = () => ({
   type: UserActionTypes.SIGN_IN_START,
 });
 
-export const signInSuccess = () => ({
+export const signInSuccess = (user: User) => ({
   type: UserActionTypes.SIGN_IN_SUCCESS,
+  payload: user,
 });
 
 export const signInFailure = () => ({
@@ -34,7 +37,6 @@ export const signOutStart = () => ({
 
 export const signOutSuccess = () => ({
   type: UserActionTypes.SIGN_OUT_SUCCESS,
-  payload: null,
 });
 
 export const signOutFailure = () => ({
@@ -45,9 +47,9 @@ export const signUpStart = () => ({
   type: UserActionTypes.SIGN_UP_START,
 });
 
-export const signUpSuccess = () => ({
+export const signUpSuccess = (user: User) => ({
   type: UserActionTypes.SIGN_UP_SUCCESS,
-  payload: null,
+  payload: user,
 });
 
 export const signUpFailure = () => ({
@@ -60,8 +62,8 @@ export const signInStartAsync =
   (email: string, password: string) => async (dispatch: UserThunkDispatch) => {
     dispatch(signInStart());
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      dispatch(signInSuccess());
+      const { user } = await signInWithEmailAndPassword(auth, email, password);
+      dispatch(signInSuccess(user));
     } catch (err: unknown) {
       dispatch(signInFailure());
     }
@@ -72,8 +74,8 @@ export const signInGoogleStartAsync =
     dispatch(signInStart());
 
     try {
-      await signInWithGoogle();
-      dispatch(signInSuccess());
+      const { user } = await signInWithGoogle();
+      dispatch(signInSuccess(user));
     } catch (err: unknown) {
       console.log("Error signing in with google", err);
       dispatch(signInFailure());
@@ -103,10 +105,20 @@ export const signUpStartAsync =
         password
       );
       await createUserProfileDocument(user, displayName);
-      dispatch(signUpSuccess());
+      dispatch(signUpSuccess(user));
     } catch (err: unknown) {
       console.log("Error in signup", err);
       dispatch(signUpFailure());
+    }
+  };
+
+export const checkCurrentUserAsync =
+  () => async (dispatch: UserThunkDispatch) => {
+    try {
+      const user = await getCurrentUser();
+      dispatch(setCurrentUser(user));
+    } catch (error) {
+      dispatch(setCurrentUser(null));
     }
   };
 
